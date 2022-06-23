@@ -1,0 +1,43 @@
+----------------------------------------------------------------------------------------------------
+Ventura
+----------------------------------------------------------------------------------------------------
+There are 35685 samples with depth to water values.
+Out of 90707 samples in the original dataframe.
+That's 39.34095494283793% of the samples. 
+
+There are 266 wells with depth to water values.
+Out of 421 wells in the original dataframe.
+That's 63.18289786223278% of the wells. 
+
+----------------------------------------------------------------------------------------------------
+San Diego
+----------------------------------------------------------------------------------------------------
+There are 141134 samples with depth to water values.
+Out of 257732 samples in the original dataframe.
+That's 54.759983238402675% of the samples. 
+
+There are 921 wells with depth to water values.
+Out of 1174 wells in the original dataframe.
+That's 78.44974446337308% of the wells. 
+
+----------------------------------------------------------------------------------------------------
+Imperial
+----------------------------------------------------------------------------------------------------
+There are 19368 samples with depth to water values.
+Out of 26739 samples in the original dataframe.
+That's 72.43352406597106% of the samples. 
+
+There are 71 wells with depth to water values.
+Out of 80 wells in the original dataframe.
+That's 88.75% of the wells.
+
+----------------------------------------------------------------------------------------------------
+Kern
+----------------------------------------------------------------------------------------------------
+There are 7908 samples with depth to water values.
+Out of 92491 samples in the original dataframe.
+That's 8.550021083132412% of the samples. 
+
+There are 67 wells with depth to water values.
+Out of 317 wells in the original dataframe.
+That's 21.13564668769716% of the wells. 
