@@ -3,7 +3,7 @@ Anaconda/Miniconda (python 3.9) recommended for environment and package handling
 Packages required: numpy, pandas, geopandas, dask_geopandas, and scipy
 Uses most up to date versions as of 04/01/2022
 
-----------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 This folder contains the ground water quality (GWQ) indicator scoring script, along with a table of MCLs and a folder with the 2020 census blocks that reside in the 263 meter screening area.
 
@@ -17,7 +17,7 @@ The second variable is named 'date' and is simply a string in YYYY-MM-DD format.
 
 When the script is ran, it will create folders for downloads, and download results and location data for Geotracker and GAMA. The GAMA website stores sample results for different departments separately and some counties do not have data for every department. The GAMA website does not throw HTTP errors when accessing a file that does not exist (i.e. department data for county doesnt exist), so python saves a corrupted zip file. This throws errors in the script, but is intended behavior and not a concern.
 
-----------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 This script downloads required files for calculations. Sample results are loaded into memory. At this point samples are filtered by date. Sample results from the different datasets are then combined into one. A sample ID(SID) is created using well ID, date sample was taken, and chemical. This SID is used to remove duplicate sample results. The MCL table is joined to the sample results, keeping only samples of contaminant that have an MCL in the table. Then magnitudes of MCL exceedences are calculated for every sample result, dividing the results value by the MCL of the contaminant. A z-score is calculated for the magnitudes and is used to remove outliers. These samples are then grouped by well ID, taking the mean of the magnitudes of MCL exceedances. This is then joined to the well location data as the base weight for wells. 
 
