@@ -1,6 +1,3 @@
-Anaconda/Miniconda (python 3.9) recommended for environment and package handling. 
-(https://docs.conda.io/en/latest/miniconda.html)
-
 Packages required: numpy, pandas, geopandas, dask_geopandas, and scipy. Uses most up to date versions as of 04/01/2022
 
 filter_samples.ipynb
