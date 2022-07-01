@@ -40,6 +40,7 @@ class Samples:
     # Function to open the geotracker edf file and return a dataframe.    
     def geotracker_df(p):
 
+        # Dictionary of data types for columns in the geotracker data.
         geotracker_dtypes = {
         'GLOBAL_ID' : 'string',
         'FIELD_PT_NAME' : 'string',
@@ -59,9 +60,10 @@ class Samples:
         # Returns dataframe from open_table() using parameters above.
         return open_table(p, geotracker_dtypes, geotracker_date, geotracker_cols)
 
+    # Function to open the gama file and return a dataframe.
     def gama_df(p):
 
-        # Dictionary of data types for gama_results for open_table().
+        # Dictionary of data types for columns in the gama data.
         gama_dtypes = {
             'GM_WELL_ID' : 'string',
             'GM_CHEMICAL_VVL' : 'string',
@@ -76,5 +78,6 @@ class Samples:
 
         # Columns of gama_results for open_table().
         gama_cols = list(gama_dtypes.keys()) + gama_date
-
+        
+        # Returns dataframe from open_table() using parameters above.
         return open_table(p, gama_dtypes, gama_date, gama_cols)
