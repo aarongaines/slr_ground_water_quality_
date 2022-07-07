@@ -151,12 +151,15 @@ class Location_Data:
     def __init__():
         pass
 
+
+# Class for openening and cleaning UST data.
 class UST_Data:
 
     def __init__():
         pass
 
 
+    # Function to open geotracker UST data.
     def geotracker(p):
 
         # Dictionary of data types for columns in the geotracker data.
@@ -197,6 +200,7 @@ class UST_Data:
         return gdf
 
 
+    # Function to open USEPA UST data.
     def usepa(p):
 
         # Dictionary of data types for columns in the usepa UST data.
@@ -226,7 +230,7 @@ class UST_Data:
 
         return gdf
 
-
+    # Function to concat geotracker and USEPA geodataframes.
     def concat_usts(gdf1, gdf2):
             
         # Concatenate gama_results and df1.
@@ -239,11 +243,14 @@ class UST_Data:
 
         return ust
 
+
+# Class for opening and cleaning cleanup data.
 class Cleanup_Data:
 
     def __init__():
         pass
-
+    
+    # Function to open geotracker cleanup data.
     def geotracker(p):
 
         cleanups_dtypes = {
