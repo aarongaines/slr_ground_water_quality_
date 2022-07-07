@@ -224,11 +224,13 @@ class UST_Data:
         
         gdf = gpd.read_file(p, dtypes = usepa_dtypes,usecols = usepa_cols)
 
+        # Drops all columns not needed.
         for column in gdf.columns:
             if column not in usepa_cols:
                 gdf = gdf.drop(column, axis=1)
 
         return gdf
+
 
     # Function to concat geotracker and USEPA geodataframes.
     def concat_usts(gdf1, gdf2):
