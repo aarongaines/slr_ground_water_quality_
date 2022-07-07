@@ -1,9 +1,10 @@
 # Module file for slr_groud_water_quality repository data cleaning.
 import pandas as pd
+import geopandas as gpd
 
 
 # Function to open data file.
-def open_table(p, dtypes, date_cols, cols):
+def open_table(p, dtypes, cols, date_cols = None):
 
     """
     open_table() is a function that opens a csv file and returns a dataframe. 
@@ -26,8 +27,13 @@ def open_table(p, dtypes, date_cols, cols):
             return df
             
         except:
-            df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
-            return df
+            try:
+                df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
+                return df
+
+            except:
+                df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', encoding_errors='backslashreplace', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
+                return df
 
 
 # Class for opening and cleaning sample data.
@@ -144,3 +150,117 @@ class Location_Data:
     # initialize class
     def __init__():
         pass
+
+class UST_Data:
+
+    def __init__():
+        pass
+
+
+    def geotracker(p):
+
+        # Dictionary of data types for columns in the geotracker data.
+        geo_dtypes = {
+            "FACILITY_ID" : "string",
+            "BUSINESS_NAME" : "string",
+            "ADDRESS" : "string",
+            "CITY" : "string",
+            "ZIP" : "string",
+            "COUNTY" : "string",
+            "LATITUDE" : "float64",
+            "LONGITUDE" : "float64",
+        }
+        geo_cols = list(geo_dtypes.keys())
+
+        # Returns dataframe from open_table() using parameters above.
+        print('Loading Geotracker file. {}'.format(p))
+        df = open_table(p, geo_dtypes, geo_cols)
+
+        # Convert column names to match usepa.
+        geo_to_usepa = {
+            "FACILITY_ID" : "Facility_I",
+            "BUSINESS_NAME" : "Name",
+            "ADDRESS" : "Address",
+            "CITY" : "City",
+            "ZIP" : "Zip_Code",
+            "COUNTY" : "County",
+            "LATITUDE" : "Latitude",
+            "LONGITUDE" : "Longitude",
+        }
+
+        df = df.rename(columns=geo_to_usepa)
+
+        df['Open_USTs'] = 1
+
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitude, df.Latitude), crs='EPSG:4326')
+
+        return gdf
+
+
+    def usepa(p):
+
+        # Dictionary of data types for columns in the usepa UST data.
+        usepa_dtypes = {
+            'Facility_I' : 'string',
+            'Name' : 'string',
+            'Address' : 'string',
+            'City' : 'string',
+            'County' : 'string',
+            'Zip_Code' : 'string',
+            'Latitude' : 'float64',
+            'Longitude' : 'float64',
+            'Open_USTs' : 'float64',
+            'geometry' : 'geometry',
+        }
+
+        usepa_cols = list(usepa_dtypes.keys())
+
+        # Returns dataframe from open_table() using parameters above.
+        print('Loading USEPA UST file. {}'.format(p))
+        
+        gdf = gpd.read_file(p, dtypes = usepa_dtypes,usecols = usepa_cols)
+
+        for column in gdf.columns:
+            if column not in usepa_cols:
+                gdf = gdf.drop(column, axis=1)
+
+        return gdf
+
+
+    def concat_usts(gdf1, gdf2):
+            
+        # Concatenate gama_results and df1.
+        print("Concatenating UST dataframes. \n")
+        ust = pd.concat([gdf1, gdf2])
+
+        ust = ust.sort_values(by=['Open_USTs'], ascending=False)
+        ust = ust.drop_duplicates(subset=['Address'], keep='first')
+        ust = ust.reset_index(drop=True)
+
+        return ust
+
+class Cleanup_Data:
+
+    def __init__():
+        pass
+
+    def geotracker(p):
+
+        cleanups_dtypes = {
+            'GLOBAL_ID' : 'string',
+            'BUSINESS_NAME' : 'string',
+            'STREET_NUMBER' : 'string',
+            'STREET_NAME' : 'string',
+            'CITY' : 'string',
+            'ZIP' : 'string',
+            'CASE_TYPE' : 'string',
+            'STATUS' : 'string',
+        }
+
+        cleanups_columns = list(cleanups_dtypes.keys())
+
+        # Returns dataframe from open_table() using parameters above.
+        print('Loading Cleanup file. {}'.format(p))
+        df = open_table(p, dtypes = cleanups_dtypes, cols = cleanups_columns)
+
+        return df
