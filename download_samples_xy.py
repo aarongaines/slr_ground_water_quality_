@@ -4,8 +4,9 @@ from pathlib import Path
 import os
 
 # sets current working directory as working directory
-# bp = Path(os.getcwd())
-bp = Path(r'E:\work\projects\coast_slr\scripts\ground_water_quality')
+bp = Path(os.getcwd())
+print(bp)
+#bp = Path(r'E:\work\projects\coast_slr\scripts\ground_water_quality')
 
 # function to create folders and ignore if folder exists
 
@@ -95,8 +96,8 @@ def download_save_zip(url, folder_path):
 ]"""
 
 county_names = [
-    'Imperial',
-    'Kern',
+    'Ventura',
+    'SanDiego',
 ]
 
 # Variables for beginning of geotracker urls.
