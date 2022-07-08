@@ -66,9 +66,9 @@ class Sample_Data:
 
         # Returns dataframe from open_table() using parameters above.
         print('Loading Geotracker file. {}'.format(p))
-        df = open_table(p, geotracker_dtypes, geotracker_date, geotracker_cols)
-        # Create WID column.
+        df = open_table(p, dtypes = geotracker_dtypes, date_cols =geotracker_date, cols = geotracker_cols)
 
+        # Create WID column.
         df['WID'] = df['GLOBAL_ID'] + '-' + df['FIELD_PT_NAME']
         df['WID'] = df['WID'].str.replace(' ','')
 
@@ -100,7 +100,7 @@ class Sample_Data:
 
         # Returns dataframe from open_table() using parameters above.
         print('Loading GAMA file. {}'.format(p))
-        df = open_table(p, gama_dtypes, gama_date, gama_cols)
+        df = open_table(p, dtypes = gama_dtypes, cols = gama_cols, date_cols = gama_date)
 
         # Dictionary to rename gama columns to match df1.
         gama_to_edf_dict = {
