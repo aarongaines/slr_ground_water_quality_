@@ -8,9 +8,8 @@ bp = Path(os.getcwd())
 print(bp)
 #bp = Path(r'E:\work\projects\coast_slr\scripts\ground_water_quality')
 
+
 # function to create folders and ignore if folder exists
-
-
 def mkdir_except(folder_name):
 
     # try to make directory (folder_name), if it exists, ignore
@@ -22,9 +21,8 @@ def mkdir_except(folder_name):
     except:
         print("Directory {} already exists".format(folder_name))
 
+
 # Defines a function for downloading a url to a path.
-
-
 def download_save_zip(url, folder_path):
 
     # Create a filename from the passed url.
@@ -65,7 +63,7 @@ def download_save_zip(url, folder_path):
             print("URLError for {} ".format(url))
 
 
-# List of counties for scores to be run on. Below are counties within the 263m screening area.
+# List of counties for data to be downloaded. Below are counties within the 263m screening area.
 """county_names = [
     'Alameda',
     'ContraCosta',
@@ -96,8 +94,10 @@ def download_save_zip(url, folder_path):
 ]"""
 
 county_names = [
-    'Ventura',
-    'SanDiego',
+    'Imperial',
+    'Kern',
+    'SantaBarbara',
+    'LosAngeles',
 ]
 
 # Variables for beginning of geotracker urls.

@@ -1,4 +1,22 @@
-Packages required: numpy, pandas, geopandas, dask_geopandas, and scipy. Uses most up to date versions as of 04/01/2022
+# Data Links:
+
+## 1. Data Portal Links
+
+    a. GeoTracker
+
+        - https://geotracker.waterboards.ca.gov/data_download_by_county
+
+## 1. Samples
+
+    a. GeoTracker
+
+        - "https://geotracker.waterboards.ca.gov/data_download/edf_by_county/{}EDF.zip".format(CountyName)
+
+    b. GAMA
+
+        - 
+
+# Script Descriptions
 
 filter_samples.ipynb
 ----------------------------------------------------------------------------------------------------
