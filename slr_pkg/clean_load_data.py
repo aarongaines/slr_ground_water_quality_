@@ -28,12 +28,23 @@ def open_table(p, dtypes, cols, date_cols = None):
             
         except:
             try:
-                df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
+                df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', quotechar='"', quoting=3, on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
                 return df
 
             except:
-                df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', encoding_errors='backslashreplace', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
-                return df
+                try:
+                    df = pd.read_csv(p, sep='\t', dtype=dtypes, engine='python', encoding='unicode_escape', encoding_errors='backslashreplace', on_bad_lines='warn', parse_dates=date_cols, usecols=cols)
+                    return df
+
+                except:
+                    try:
+                        df = pd.read_csv(p, sep='\t', dtype=dtypes, usecols= cols, lineterminator='\n', encoding='unicode_escape',
+                                quotechar='"',  quoting=3,  on_bad_lines='warn')
+                        return df
+
+                    except:
+                        df = pd.read_table(p, sep='\t', dtype=dtypes, usecols= cols, encoding='unicode_escape')
+                        return df
 
 
 # Class for opening and cleaning sample data.
@@ -144,13 +155,123 @@ class Sample_Data:
         return samples
 
 
+    def full_dataset(list_geotracker, list_gama):
+        """
+        Function to open a list of files and return a dataframe.
+        """
+        # Initialize dataframe.
+        geo = pd.DataFrame()
+        gama = pd.DataFrame()
+
+        # Loop through list of files.
+        for p in list_geotracker:
+            # Open file.
+            geo_temp = Sample_Data.geotracker_df(p)
+            # Concatenate dataframes.
+            geo = pd.concat([geo, geo_temp])
+
+        for p in list_gama:
+            # Open file.
+            gama_temp = Sample_Data.gama_df(p)
+            # Concatenate dataframes.
+            gama = pd.concat([gama, gama_temp])
+
+        # Concatenate gama and geotracker dataframes.
+        samples = Sample_Data.concat_samples(geo, gama)
+        return samples
+
 # Class for opening and cleaning well location data.
 class Location_Data:
 
     # initialize class
     def __init__():
         pass
+    
 
+    def geotracker_df(p):
+        
+        dtypes = {
+        'GLOBAL_ID' : 'string',
+        'FIELD_PT_NAME' : 'string',
+        'FIELD_PT_CLASS' : 'string',
+        'LATITUDE' : 'Float64',
+        'LONGITUDE' : 'Float64',
+        }
+
+        cols = list(dtypes.keys())
+
+        print('Loading Geotracker file. {}'.format(p))
+        df = open_table(p, dtypes = dtypes, cols = cols)
+
+        df['WID'] = df['GLOBAL_ID'] + '-' + df['FIELD_PT_NAME']
+        df['WID'] = df['WID'].str.replace(' ','')
+
+        df = df.drop(columns=['GLOBAL_ID', 'FIELD_PT_NAME'])
+
+        return df
+
+    def gama_df(p):
+
+        dtypes = {
+            'GM_WELL_ID' : 'string',
+            'GM_WELL_CATEGORY' : 'string',
+            'GM_LATITUDE' : 'Float64',
+            'GM_LONGITUDE' : 'Float64',
+        }
+
+        print('Loading Geotracker file. {}'.format(p))
+        gama_geo_dict = {
+            'GM_WELL_ID' : 'WID',
+            'GM_WELL_CATEGORY' : 'FIELD_PT_CLASS',
+            'GM_LATITUDE' : 'LATITUDE',
+            'GM_LONGITUDE' : 'LONGITUDE',
+        }
+
+        cols = list(dtypes.keys())
+        df = open_table(p, dtypes = dtypes, cols = cols)
+        df = df.rename(columns=gama_geo_dict)
+
+        return df
+
+    def concat_df(df1, df2):
+            
+            # Concatenate gama_results and df1.
+            print("Concatenating GAMA and Geotracker dataframes. \n")
+            df = pd.concat([df1, df2])
+    
+            # List of columns that require a value.
+            req_cols = ['WID','LATITUDE', 'LONGITUDE']
+    
+            # Drops rows with missing values in required columns.
+            print("Checking for missing values. \n")
+            df = df.dropna(subset=req_cols)
+
+            return df
+
+    def full_dataset(list_geotracker, list_gama):
+        """
+        Function to open a list of files and return a dataframe.
+        """
+        # Initialize dataframe.
+        geo = pd.DataFrame()
+        gama = pd.DataFrame()
+
+        # Loop through list of files.
+        for p in list_geotracker:
+            # Open file.
+            geo_temp = Location_Data.geotracker_df(p)
+            # Concatenate dataframes.
+            geo = pd.concat([geo, geo_temp])
+
+        for p in list_gama:
+            # Open file.
+            gama_temp = Location_Data.gama_df(p)
+            # Concatenate dataframes.
+            gama = pd.concat([gama, gama_temp])
+
+        # Concatenate gama and geotracker dataframes.
+        df = Location_Data.concat_df(geo, gama)
+        return df
 
 # Class for openening and cleaning UST data.
 class UST_Data:
@@ -245,7 +366,6 @@ class UST_Data:
 
         return ust
 
-
 # Class for opening and cleaning cleanup data.
 class Cleanup_Data:
 
@@ -273,3 +393,9 @@ class Cleanup_Data:
         df = open_table(p, dtypes = cleanups_dtypes, cols = cleanups_columns)
 
         return df
+
+class Combine_Data:
+
+    def __init__():
+        pass
+
