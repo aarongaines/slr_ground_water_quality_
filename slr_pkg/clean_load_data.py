@@ -76,7 +76,7 @@ class Sample_Data:
         geotracker_cols = list(geotracker_dtypes.keys()) + geotracker_date
 
         # Returns dataframe from open_table() using parameters above.
-        print('Loading Geotracker file. {}'.format(p))
+        print('Loading Geotracker file: {}'.format(p))
         df = open_table(p, dtypes = geotracker_dtypes, date_cols =geotracker_date, cols = geotracker_cols)
 
         # Create WID column.
@@ -110,7 +110,7 @@ class Sample_Data:
         gama_cols = list(gama_dtypes.keys()) + gama_date
 
         # Returns dataframe from open_table() using parameters above.
-        print('Loading GAMA file. {}'.format(p))
+        print('Loading GAMA file: {}'.format(p))
         df = open_table(p, dtypes = gama_dtypes, cols = gama_cols, date_cols = gama_date)
 
         # Dictionary to rename gama columns to match df1.
@@ -136,20 +136,30 @@ class Sample_Data:
     def concat_samples(df1, df2):
 
         # Concatenate gama_results and df1.
-        print("Concatenating GAMA and Geotracker dataframes. \n")
+        print("Concatenating GAMA and Geotracker dataframes: \n")
         samples = pd.concat([df1, df2])
 
         # List of columns that require a value.
         samples_req_cols = ['WID','LOGDATE', 'PARLABEL', 'PARVAL']
 
         # Drops rows with missing values in required columns.
-        print("Checking for missing values. \n")
+        print("Checking for missing values. ")
         samples = samples.dropna(subset=samples_req_cols)
 
         # Set group ID with WID and LOGDATE.
-        print("Creating group ID (GID). \n")
-        samples['LOGDATE'] = samples['LOGDATE'].astype(str)
+        print("Creating group ID (GID). ")
+        samples['LOGDATE'] = pd.to_datetime(samples['LOGDATE'].astype(str), errors='coerce', format='%Y-%m-%d')
         samples['GID'] = list(zip(samples['WID'], samples['LOGDATE']))
+
+        # Set sample ID with GID and PARLABEL.
+        print("Creating sample ID (SID). ")
+        samples['SID'] = list(zip(samples['GID'], samples['PARLABEL']))
+
+        print("Sorting samples. ")
+        samples = samples.sort_values(by=['PARVAL'], ascending=False)
+        print("Dropping duplicate samples. \n")
+        samples = samples.drop_duplicates(subset=['SID'], keep='first')
+        samples = samples.dropna(subset=['LOGDATE'])
         samples = samples.reset_index(drop=True)
 
         return samples
@@ -170,15 +180,20 @@ class Sample_Data:
             # Concatenate dataframes.
             geo = pd.concat([geo, geo_temp])
 
+        print('\n')
+
         for p in list_gama:
             # Open file.
             gama_temp = Sample_Data.gama_df(p)
             # Concatenate dataframes.
             gama = pd.concat([gama, gama_temp])
 
+        print('\n')
+
         # Concatenate gama and geotracker dataframes.
         samples = Sample_Data.concat_samples(geo, gama)
         return samples
+
 
 # Class for opening and cleaning well location data.
 class Location_Data:
@@ -200,7 +215,7 @@ class Location_Data:
 
         cols = list(dtypes.keys())
 
-        print('Loading Geotracker file. {}'.format(p))
+        print('Loading Geotracker file: {}'.format(p))
         df = open_table(p, dtypes = dtypes, cols = cols)
 
         df['WID'] = df['GLOBAL_ID'] + '-' + df['FIELD_PT_NAME']
@@ -219,7 +234,7 @@ class Location_Data:
             'GM_LONGITUDE' : 'Float64',
         }
 
-        print('Loading Geotracker file. {}'.format(p))
+        print('Loading GAMA file: {}'.format(p))
         gama_geo_dict = {
             'GM_WELL_ID' : 'WID',
             'GM_WELL_CATEGORY' : 'FIELD_PT_CLASS',
@@ -236,15 +251,19 @@ class Location_Data:
     def concat_df(df1, df2):
             
             # Concatenate gama_results and df1.
-            print("Concatenating GAMA and Geotracker dataframes. \n")
+            print("Concatenating GAMA and Geotracker dataframes: \n")
             df = pd.concat([df1, df2])
     
             # List of columns that require a value.
             req_cols = ['WID','LATITUDE', 'LONGITUDE']
     
             # Drops rows with missing values in required columns.
-            print("Checking for missing values. \n")
+            print("Checking for missing values. ")
             df = df.dropna(subset=req_cols)
+
+            print("Removing duplicate WIDs. \n")
+            df = df.drop_duplicates(subset=['WID'], keep='first')
+            df = df.reset_index(drop=True)
 
             return df
 
@@ -263,15 +282,20 @@ class Location_Data:
             # Concatenate dataframes.
             geo = pd.concat([geo, geo_temp])
 
+        print('\n')
+
         for p in list_gama:
             # Open file.
             gama_temp = Location_Data.gama_df(p)
             # Concatenate dataframes.
             gama = pd.concat([gama, gama_temp])
 
+        print('\n')
+        
         # Concatenate gama and geotracker dataframes.
         df = Location_Data.concat_df(geo, gama)
         return df
+
 
 # Class for openening and cleaning UST data.
 class UST_Data:
@@ -366,6 +390,7 @@ class UST_Data:
 
         return ust
 
+
 # Class for opening and cleaning cleanup data.
 class Cleanup_Data:
 
@@ -394,8 +419,8 @@ class Cleanup_Data:
 
         return df
 
+
 class Combine_Data:
 
     def __init__():
         pass
-
