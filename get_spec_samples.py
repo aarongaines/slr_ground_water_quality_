@@ -1,5 +1,4 @@
 import os, pandas as pd, slr_pkg.clean_load_data as cld, slr_pkg.para as para
-from slr_pkg.clean_load_data import open_table
 from pathlib import Path
 
 
@@ -38,7 +37,6 @@ for area in areas:
     gama_xy_files = gama_xy_path.glob('**/*.zip')
 
     locations = cld.Location_Data.full_dataset(geo_xy_files, gama_xy_files)
-
 
 
     # Join well location data to sample results.
