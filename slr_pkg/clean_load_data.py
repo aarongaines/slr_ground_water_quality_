@@ -205,7 +205,7 @@ class Location_Data:
     def __init__():
         pass
     
-    
+
     # Function to open a geotracker well location file and return a dataframe.
     def geotracker_df(p):
         
@@ -442,3 +442,5 @@ class Merged_Data:
 
     def __init__():
         pass
+
+# 
