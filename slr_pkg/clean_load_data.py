@@ -47,7 +47,7 @@ def open_table(p, dtypes, cols, date_cols = None):
                         return df
 
 
-# Class for opening and cleaning sample data.
+# Class for opening and cleaning sample data as pandas dataframe.
 class Sample_Data:
 
     # initialize class
@@ -59,7 +59,7 @@ class Sample_Data:
     def geotracker_df(p):
 
         # Dictionary of data types for columns in the geotracker data.
-        geotracker_dtypes = {
+        dtypes = {
         'GLOBAL_ID' : 'string',
         'FIELD_PT_NAME' : 'string',
         'PARLABEL' : 'string',
@@ -70,22 +70,22 @@ class Sample_Data:
         }
 
         # Date column of geotracker data for open_table().
-        geotracker_date = ['LOGDATE']
+        date = ['LOGDATE']
 
         # Columns of geotracker data for open_table().
-        geotracker_cols = list(geotracker_dtypes.keys()) + geotracker_date
+        cols = list(dtypes.keys()) + date
 
         # Returns dataframe from open_table() using parameters above.
         print('Loading Geotracker file: {} '.format(p))
-        df = open_table(p, dtypes = geotracker_dtypes, date_cols =geotracker_date, cols = geotracker_cols)
+        df = open_table(p, dtypes=dtypes, date_cols=date, cols=cols)
 
         # Create WID column.
+        print('Creating WID column... ')
         df['WID'] = df['GLOBAL_ID'] + '-' + df['FIELD_PT_NAME']
         df['WID'] = df['WID'].str.replace(' ','')
 
         # Drop unnecessary columns.
         df = df.drop(columns=['GLOBAL_ID', 'FIELD_PT_NAME'])
-
 
         return df
 
@@ -94,7 +94,7 @@ class Sample_Data:
     def gama_df(p):
 
         # Dictionary of data types for columns in the gama data.
-        gama_dtypes = {
+        dtypes = {
             'GM_WELL_ID' : 'string',
             'GM_CHEMICAL_VVL' : 'string',
             'GM_RESULT_MODIFIER' : 'string',
@@ -104,14 +104,14 @@ class Sample_Data:
             }
 
         # Date column of gama data for open_table().
-        gama_date = ['GM_SAMP_COLLECTION_DATE']
+        date = ['GM_SAMP_COLLECTION_DATE']
 
         # Columns of gama data for open_table().
-        gama_cols = list(gama_dtypes.keys()) + gama_date
+        cols = list(dtypes.keys()) + date
 
         # Returns dataframe from open_table() using parameters above.
         print('Loading GAMA file: {} '.format(p))
-        df = open_table(p, dtypes = gama_dtypes, cols = gama_cols, date_cols = gama_date)
+        df = open_table(p, dtypes = dtypes, cols = cols, date_cols = date)
 
         # Dictionary to rename gama columns to match df1.
         gama_to_edf_dict = {
@@ -125,6 +125,7 @@ class Sample_Data:
         }
 
         # Rename gama columns to match df1.
+        print('Renaming GAMA columns... ')
         df = df.rename(columns=gama_to_edf_dict)
 
         df['WID'] = df['WID'].str.replace(' ','')
@@ -157,14 +158,18 @@ class Sample_Data:
 
         print("Sorting samples... ")
         samples = samples.sort_values(by=['PARVAL'], ascending=False)
+
         print("Dropping duplicate samples... \n")
         samples = samples.drop_duplicates(subset=['SID'], keep='first')
         samples = samples.dropna(subset=['LOGDATE'])
         samples = samples.reset_index(drop=True)
 
+
+
         return samples
 
 
+    # Function to return a dataframe of all samples. Takes list of sample files as input.
     def full_dataset(list_geotracker, list_gama):
         """
         Function to open a list of files and return a dataframe.
@@ -193,14 +198,15 @@ class Sample_Data:
         return samples
 
 
-# Class for opening and cleaning well location data.
+# Class for opening and cleaning well location data as pandas dataframe.
 class Location_Data:
 
     # initialize class
     def __init__():
         pass
     
-
+    
+    # Function to open a geotracker well location file and return a dataframe.
     def geotracker_df(p):
         
         dtypes = {
@@ -223,6 +229,8 @@ class Location_Data:
 
         return df
 
+
+    # Function to open a gama well location file and return a dataframe.
     def gama_df(p):
 
         dtypes = {
@@ -246,6 +254,8 @@ class Location_Data:
 
         return df
 
+
+    # Function to concatenate gama and geotracker dataframes.
     def concat_df(df1, df2):
             
             # Concatenate gama_results and df1.
@@ -259,12 +269,15 @@ class Location_Data:
             print("Checking for missing values... ")
             df = df.dropna(subset=req_cols)
 
+            # Drop duplicate WIDs and reset index.
             print("Removing duplicate WIDs...")
             df = df.drop_duplicates(subset=['WID'], keep='first')
             df = df.reset_index(drop=True)
 
             return df
 
+
+    # Function to return a dataframe of well locations. Takes list of well location files as input.
     def full_dataset(list_geotracker, list_gama):
         """
         Function to open a list of files and return a dataframe.
@@ -295,7 +308,14 @@ class Location_Data:
         return df
 
 
-# Class for openening and cleaning UST data.
+# Class for opening and cleaning well depth to water data as pandas dataframe.
+class Depth_Data:
+
+    def __init__():
+        pass
+
+
+# Class for openening and cleaning UST data as geopandas geodataframe.
 class UST_Data:
 
     def __init__():
@@ -389,7 +409,7 @@ class UST_Data:
         return ust
 
 
-# Class for opening and cleaning cleanup data.
+# Class for opening and cleaning cleanup data as geopandas geodataframe.
 class Cleanup_Data:
 
     def __init__():
@@ -418,7 +438,7 @@ class Cleanup_Data:
         return df
 
 
-class Combine_Data:
+class Merged_Data:
 
     def __init__():
         pass
