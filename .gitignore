@@ -155,8 +155,4 @@ cython_debug/
 results/
 dask-worker-space/
 elevation/
-gama_results/
-gama_xy/
-geotracker_edf_results/
-geotracker_xy/
-study_area/
+data/
