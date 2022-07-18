@@ -5,16 +5,19 @@ from pathlib import Path
 # Get current working directory
 bp = Path(os.getcwd())
 
+# Set base data directory.
+dp  = bp / 'data'
+
 # Set sample data directory.
-edf_path = bp / 'geotracker_edf_results'
-gama_path = bp / 'gama_results'
+edf_path = dp / 'geotracker_edf_results'
+gama_path = dp / 'gama_results'
 
 # Set location data directory.
-geo_xy_path = bp / 'geotracker_xy'
-gama_xy_path = bp / "gama_xy"
+geo_xy_path = dp / 'geotracker_xy'
+gama_xy_path = dp / "gama_xy"
 
 # Set results directory
-results_path = bp / "results"
+results_path = dp / "results"
 
 # Ask for county to gather data for.
 # area = input('Enter county: ')
@@ -45,7 +48,7 @@ for area in areas:
     print('Loading MCL table \n')
 
     # Create path to mcl table.
-    mcl_path = bp / 'MCLs.xlsx'
+    mcl_path = dp / 'MCLs.xlsx'
 
     # Open mcl table.
     mcl = pd.read_excel(mcl_path,sheet_name='MCL', engine='openpyxl')
@@ -55,7 +58,7 @@ for area in areas:
     samples = samples.merge(mcl, left_on='PARLABEL', right_on='chem_abrv', how='inner')
 
     # Load conversion tables.
-    metric_conversion = pd.read_excel(bp / 'unit_conversion.xlsx', sheet_name='metric')
+    metric_conversion = pd.read_excel(dp / 'unit_conversion.xlsx', sheet_name='metric')
 
     # join coversion factors to samples based on sample unit.
     samples = samples.merge(metric_conversion, how='inner', left_on='UNITS', right_on='start_unit')
