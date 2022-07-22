@@ -1,4 +1,5 @@
 import os, pandas as pd, slr_pkg.clean_load_data as cld, slr_pkg.para as para
+from collections import Counter
 from pathlib import Path
 
 
@@ -58,10 +59,11 @@ for area in areas:
     samples = samples.merge(mcl, left_on='PARLABEL', right_on='chem_abrv', how='inner')
 
     # Load conversion tables.
-    metric_conversion = pd.read_excel(dp / 'unit_conversion.xlsx', sheet_name='metric')
+    metric_conversion = pd.read_excel(bp / 'unit_conversion.xlsx', sheet_name='metric')
 
     # join coversion factors to samples based on sample unit.
     samples = samples.merge(metric_conversion, how='inner', left_on='UNITS', right_on='start_unit')
+    samples = samples.drop_duplicates(subset=['SID'], keep='first')
 
 
     # Create mask for samples with MCL units in UG/L and converts sample result units to UG/L.
@@ -89,25 +91,8 @@ for area in areas:
     # Select samples with contaminants of interest.
     spec_samples = spec_samples.loc[spec_samples['PARLABEL'].isin(chems)]
 
-    # Create groups of spec_samples based on WID and PARLABEL(contaminant label).
-    sample_groups = spec_samples.groupby(['WID'])['PARLABEL'].apply(list).reset_index()
-
-    from collections import Counter
+    counter = Counter(spec_samples['PARLABEL'])
+    print(counter.most_common(1))
 
 
-    def select_wells(row):
-        wid = row['WID']
-        counter = Counter(row['PARLABEL'])
-        if len(counter) == len(chems):
-            if all(i >= 4 for i in counter.values()):
-                return  wid
-
-
-    # Create mask of sample groups meeting parameter requirements.
-    res = sample_groups.apply(select_wells, axis=1)
-
-    # Use mask to select sample results from wells that meet parameter requirements.
-    spec_samples = spec_samples[spec_samples['WID'].isin(res)]
-
-    # Save sample results to csv.
-    spec_samples.to_csv(results_path / '{}_dd_spec_samples_{}.csv'.format(area.lower(), str(len(chems))))
+    spec_samples.to_csv(results_path / '{}_allsamples.csv'.format(area))
