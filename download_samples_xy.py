@@ -103,18 +103,22 @@ county_names = [
 # Variables for beginning of geotracker urls.
 geotracker_edf_url = "https://geotracker.waterboards.ca.gov/data_download/edf_by_county/"
 geotracker_xy_url = "https://geotracker.waterboards.ca.gov/data_download/geo_by_county/"
+geotracker_z_url = "https://geotracker.waterboards.ca.gov/data_download/geo_by_county/"
 
 # Variables for the end of GeoTracker urls.
 edf_name = 'EDF.zip'
 xy_name = 'GeoXY.zip'
+z_name = 'GeoZ.zip'
 
 # Create the path for geotracker downloads (edf AND xy)
 geo_edf_path = bp / 'geotracker_edf_results'
 geo_xy_path = bp / 'geotracker_xy'
+geo_z_path = bp / 'geotracker_z'
 
 # Call function to create directories for geotracker downloads.
 mkdir_except(geo_edf_path)
 mkdir_except(geo_xy_path)
+mkdir_except(geo_z_path)
 
 
 """
@@ -161,6 +165,9 @@ download_geotracker(geotracker_edf_url, county_names, edf_name, geo_edf_path)
 # Prints message and calls fuction to geotracker sample locations (xy)
 print('Downloading GeoTracker XY Data: \n')
 download_geotracker(geotracker_xy_url, county_names, xy_name, geo_xy_path)
+
+print('Downloading GeoTracker Z Data: \n')
+download_save_zip(geotracker_z_url, county_names, z_name, geo_z_path)
 
 # set base gama results url and creates a path for them to be downloaded to
 gama_base_url = 'https://gamagroundwater.waterboards.ca.gov/gama/data_download/'

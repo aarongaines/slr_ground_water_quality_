@@ -21,7 +21,7 @@ results_path = bp / "results"
 
 # Ask for county to gather data for.
 # area = input('Enter county: ')
-areas = ['Ventura','SanDiego']
+areas = ['Ventura','SanDiego', 'Kern', 'Imperial','SantaBarbara','LosAngeles']
 # areas = ['LosAngeles']
 
 for area in areas:
@@ -29,62 +29,15 @@ for area in areas:
     # List of contaminants.
     chems = para.conts11
 
-    edf_files = edf_path.glob('**/*{}*.zip'.format(area))
-    gama_files = gama_path.glob('**/*{}*.zip'.format(area.lower()))
-
-    samples = cld.Sample_Data.full_dataset(edf_files, gama_files)
-
-
-
-    geo_xy_files = geo_xy_path.glob('**/*{}*.zip'.format(area))
-    gama_xy_files = gama_xy_path.glob('**/*.zip')
-
-    locations = cld.Location_Data.full_dataset(geo_xy_files, gama_xy_files)
-
-
-    # Join well location data to sample results.
-    samples = samples.merge(locations, left_on='WID', right_on='WID', how='inner')
-
-    print('Loading MCL table \n')
-
-    # Create path to mcl table.
-    mcl_path = dp / 'MCLs.xlsx'
-
-    # Open mcl table.
-    mcl = pd.read_excel(mcl_path,sheet_name='MCL', engine='openpyxl')
-
-    # join MCL values to sample results
-    print('Joining MCL values to samples \n')
-    samples = samples.merge(mcl, left_on='PARLABEL', right_on='chem_abrv', how='inner')
-
-    # Load conversion tables.
-    metric_conversion = pd.read_excel(dp / 'unit_conversion.xlsx', sheet_name='metric')
-
-    # join coversion factors to samples based on sample unit.
-    samples = samples.merge(metric_conversion, how='inner', left_on='UNITS', right_on='start_unit')
-
-
-    # Create mask for samples with MCL units in UG/L and converts sample result units to UG/L.
-    mask = samples['UNITS'] != samples['units']
-
-    # Multiply sample results by conversion factor.
-    samples.loc[mask, 'PARVAL'] = samples['PARVAL'] * samples['coef']
-    samples['UNITS'] = 'UG/L'
-
-    # Drop columns that are not needed.
-    samples.drop(columns=['REPDL','GID', 'SID','chem_abrv', 'units','comp_conc_type','start_unit', 'coef'], inplace=True)
-
-    # Create exceedence attribute, true if sample result exceeds reporting limit.
-    samples['exceedence'] = samples['PARVAL'] > samples['comp_conc_val']
-
-    # Create magnitude attribute. Sample result value divided by the comparison concentration value (MCL or Action level) minus 1.
-    samples['magnitude'] = (samples['PARVAL'] / samples['comp_conc_val']) - 1
-
+    samples = pd.read_csv(dp / '{}_clean_samples.csv'.format(area))
     # subset of specific samples meeting parameters.
-    spec_samples = samples
+    spec_samples = samples.copy()
 
-    # Select spec_samples taken since 2010.
+    # Select spec_samples taken since 2012.
     spec_samples = spec_samples.loc[spec_samples['LOGDATE'] >= '2012-01-01']
+
+    # Select spec_samples with wells of "monitoring well" type.
+    spec_samples = spec_samples[(spec_samples['FIELD_PT_CLASS'] == 'MW') | (spec_samples['FIELD_PT_CLASS'] == 'MONITORING')].copy()
 
     # Select samples with contaminants of interest.
     spec_samples = spec_samples.loc[spec_samples['PARLABEL'].isin(chems)]
@@ -110,4 +63,4 @@ for area in areas:
     spec_samples = spec_samples[spec_samples['WID'].isin(res)]
 
     # Save sample results to csv.
-    spec_samples.to_csv(results_path / '{}_dd_spec_samples_{}.csv'.format(area.lower(), str(len(chems))))
+    spec_samples.to_csv(results_path / '{}_MW_2012_spec_samples_{}.csv'.format(area.lower(), str(len(chems))))
