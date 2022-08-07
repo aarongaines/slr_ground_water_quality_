@@ -15,6 +15,7 @@ gama_path = dp / 'gama_results'
 # Set location data directory.
 geo_xy_path = dp / 'geotracker_xy'
 gama_xy_path = dp / "gama_xy"
+xy_path = dp / "xy"
 
 # Set results directory
 results_path = bp / "results"
@@ -23,6 +24,8 @@ results_path = bp / "results"
 # area = input('Enter county: ')
 areas = ['Ventura','SanDiego', 'Kern', 'Imperial','SantaBarbara','LosAngeles']
 # areas = ['LosAngeles']
+
+locations = pd.read_csv(xy_path / 'all_xy_elev.csv')
 
 for area in areas:
 
@@ -33,14 +36,6 @@ for area in areas:
     gama_files = gama_path.glob('**/*{}*.zip'.format(area.lower()))
 
     samples = cld.Sample_Data.full_dataset(edf_files, gama_files)
-
-
-
-    geo_xy_files = geo_xy_path.glob('**/*{}*.zip'.format(area))
-    gama_xy_files = gama_xy_path.glob('**/*.zip')
-
-    locations = cld.Location_Data.full_dataset(geo_xy_files, gama_xy_files)
-
 
     # Join well location data to sample results.
     samples = samples.merge(locations, left_on='WID', right_on='WID', how='inner')
@@ -79,4 +74,4 @@ for area in areas:
     # Create magnitude attribute. Sample result value divided by the comparison concentration value (MCL or Action level) minus 1.
     samples['magnitude'] = (samples['PARVAL'] / samples['comp_conc_val']) - 1
 
-    samples.to_csv(dp / '{}_clean_samples.csv'.format(area), index=False)
+    samples.to_csv(dp / '{}_clean_samples_elev.csv'.format(area), index=False)
