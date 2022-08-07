@@ -29,7 +29,7 @@ for area in areas:
     # List of contaminants.
     chems = para.conts11
 
-    samples = pd.read_csv(dp / '{}_clean_samples.csv'.format(area))
+    samples = pd.read_csv(dp / '{}_clean_samples_elev_dtw.csv'.format(area))
     # subset of specific samples meeting parameters.
     spec_samples = samples.copy()
 
@@ -37,7 +37,8 @@ for area in areas:
     spec_samples = spec_samples.loc[spec_samples['LOGDATE'] >= '2012-01-01']
 
     # Select spec_samples with wells of "monitoring well" type.
-    spec_samples = spec_samples[(spec_samples['FIELD_PT_CLASS'] == 'MW') | (spec_samples['FIELD_PT_CLASS'] == 'MONITORING')].copy()
+    #spec_samples = spec_samples[(spec_samples['FIELD_PT_CLASS'] == 'MW') | (spec_samples['FIELD_PT_CLASS'] == 'MONITORING')].copy()
+    
 
     # Select samples with contaminants of interest.
     spec_samples = spec_samples.loc[spec_samples['PARLABEL'].isin(chems)]
