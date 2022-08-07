@@ -122,7 +122,7 @@ mkdir_except(geo_z_path)
 
 
 """
-The download_geotracker() function below creates a list of urls for GeoTracker downloads. It uses the 
+The download_geotracker() function below creates a list of urls for GeoTracker downloads and then downloads them. It uses the 
 county_names list to create the urls. The urls are create by appending the county name to the beginning of the urls. 
 Then the ending of the url is appened to the url depending on the type of download. These urls are
 appended to the urlList. The urlList is then looped through and the files are downloaded by calling the
