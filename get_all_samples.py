@@ -86,7 +86,7 @@ for area in areas:
     spec_samples = samples
 
     # Select spec_samples taken since 2010.
-    spec_samples = spec_samples.loc[spec_samples['LOGDATE'] >= '2012-01-01']
+    spec_samples = spec_samples.loc[spec_samples['LOGDATE'] >= '2000-01-01']
 
     # Select samples with contaminants of interest.
     spec_samples = spec_samples.loc[spec_samples['PARLABEL'].isin(chems)]
