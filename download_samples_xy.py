@@ -6,7 +6,9 @@ import os
 # sets current working directory as working directory
 bp = Path(os.getcwd())
 print(bp)
-#bp = Path(r'E:\work\projects\coast_slr\scripts\ground_water_quality')
+
+# Set base data directory.
+dp  = bp / 'data'
 
 
 # function to create folders and ignore if folder exists
@@ -103,22 +105,26 @@ county_names = [
 # Variables for beginning of geotracker urls.
 geotracker_edf_url = "https://geotracker.waterboards.ca.gov/data_download/edf_by_county/"
 geotracker_xy_url = "https://geotracker.waterboards.ca.gov/data_download/geo_by_county/"
+geotracker_z_url = "https://geotracker.waterboards.ca.gov/data_download/geo_by_county/"
 
 # Variables for the end of GeoTracker urls.
 edf_name = 'EDF.zip'
 xy_name = 'GeoXY.zip'
+z_name = 'GeoZ.zip'
 
 # Create the path for geotracker downloads (edf AND xy)
-geo_edf_path = bp / 'geotracker_edf_results'
-geo_xy_path = bp / 'geotracker_xy'
+geo_edf_path = dp / 'geotracker_edf_results'
+geo_xy_path = dp / 'geotracker_xy'
+geo_z_path = dp / 'geotracker_z'
 
 # Call function to create directories for geotracker downloads.
 mkdir_except(geo_edf_path)
 mkdir_except(geo_xy_path)
+mkdir_except(geo_z_path)
 
 
 """
-The download_geotracker() function below creates a list of urls for GeoTracker downloads. It uses the 
+The download_geotracker() function below creates a list of urls for GeoTracker downloads and then downloads them. It uses the 
 county_names list to create the urls. The urls are create by appending the county name to the beginning of the urls. 
 Then the ending of the url is appened to the url depending on the type of download. These urls are
 appended to the urlList. The urlList is then looped through and the files are downloaded by calling the
@@ -161,6 +167,9 @@ download_geotracker(geotracker_edf_url, county_names, edf_name, geo_edf_path)
 # Prints message and calls fuction to geotracker sample locations (xy)
 print('Downloading GeoTracker XY Data: \n')
 download_geotracker(geotracker_xy_url, county_names, xy_name, geo_xy_path)
+
+print('Downloading GeoTracker Z Data: \n')
+download_save_zip(geotracker_z_url, county_names, z_name, geo_z_path)
 
 # set base gama results url and creates a path for them to be downloaded to
 gama_base_url = 'https://gamagroundwater.waterboards.ca.gov/gama/data_download/'
