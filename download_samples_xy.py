@@ -6,7 +6,9 @@ import os
 # sets current working directory as working directory
 bp = Path(os.getcwd())
 print(bp)
-#bp = Path(r'E:\work\projects\coast_slr\scripts\ground_water_quality')
+
+# Set base data directory.
+dp  = bp / 'data'
 
 
 # function to create folders and ignore if folder exists
@@ -111,9 +113,9 @@ xy_name = 'GeoXY.zip'
 z_name = 'GeoZ.zip'
 
 # Create the path for geotracker downloads (edf AND xy)
-geo_edf_path = bp / 'geotracker_edf_results'
-geo_xy_path = bp / 'geotracker_xy'
-geo_z_path = bp / 'geotracker_z'
+geo_edf_path = dp / 'geotracker_edf_results'
+geo_xy_path = dp / 'geotracker_xy'
+geo_z_path = dp / 'geotracker_z'
 
 # Call function to create directories for geotracker downloads.
 mkdir_except(geo_edf_path)
